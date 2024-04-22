@@ -1,10 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <SPI.h>
-
-
-#include <Wire.h>
-
+#include <shm.hpp>
 #include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 
 
@@ -40,9 +36,8 @@ void interrupt_handler()
       }
       break;
 
-      case SENSOR_REPORTID_ROTATION_VECTOR:
-      case SENSOR_REPORTID_GAME_ROTATION_VECTOR: {
-         newQuat = 1;
+      case SENSOR_REPORTID_AR_VR_STABILIZED_ROTATION_VECTOR:{
+        newQuat = 1;
       }
       break;
       default:
@@ -53,21 +48,17 @@ void interrupt_handler()
 
 void setup()
 {
+
+  packet.data.h1 = 'a';
+  packet.data.h2 = 'b';
+  packet.data.h3 = 'c';
+  packet.data.h4 = '\n';
+
   Serial.begin(115200);
   Serial.println();
   Serial.println("BNO080 Read example with Interrupt handler, getReading and multiple access");
 
   Wire.begin();
-
-  //Are you using a ESP? Check this issue for more information: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/16
-//  //=================================
-//  delay(100); //  Wait for BNO to boot
-//  // Start i2c and BNO080
-//  Wire.flush();   // Reset I2C
-//  IMU.begin(BNO080_DEFAULT_ADDRESS, Wire);
-//  Wire.begin(4, 5);
-//  Wire.setClockStretchLimit(4000);
-//  //=================================
 
   //myIMU.enableDebugging(); // Uncomment this line to enable debug messages on Serial
 
@@ -86,49 +77,45 @@ void setup()
   interrupts();
 
   // myIMU.enableLinearAccelerometer(50);  // m/s^2 no gravity, data update every 50 ms
-  myIMU.enableRotationVector(5); //Send data update every 100 ms
-
-  Serial.println(F("LinearAccelerometer enabled, Output in form x, y, z, accuracy, in m/s^2"));
-  Serial.println(F("Rotation vector, Output in form i, j, k, real, accuracy"));
-
+  myIMU.enableARVRStabilizedRotationVector(5); //Send data update every 100 ms
 }
 
 
+int flag = 0;
 
 void loop()
 {
   // Serial.println("Doing other things");
   delay(10); //You can do many other things. Interrupt handler will retrieve latest data
 
-  // If new data on LinAcc sensor, retrieve it from the library memory
-  if(newLinAcc) {
-    // myIMU.getLinAccel(ax, ay, az, linAccuracy);
-    // newLinAcc = 0; // mark data as read
-    // Serial.print(F("acc :"));
-    // Serial.print(ax, 2);
-    // Serial.print(F(","));
-    // Serial.print(ay, 2);
-    // Serial.print(F(","));
-    // Serial.print(az, 2);
-    // Serial.print(F(","));
-    // Serial.print(az, 2);
-    // Serial.print(F(","));
-    // printAccuracyLevel(linAccuracy);
-  }
   // If new data on Rotation Vector sensor, retrieve it from the library memory
   if(newQuat) {
     myIMU.getQuat(qx, qy, qz, qw, quatRadianAccuracy, quatAccuracy);
+    packet.data.q[0] = qx;
+    packet.data.q[1] = qy;
+    packet.data.q[2] = qz;
+    packet.data.q[3] = qw;
+    packet.data.quat_accuracy = quatAccuracy;
+
     newQuat = 0; // mark data as read
-    Serial.print(F("quat:"));
-    Serial.print(qx, 2);
-    Serial.print(F(","));
-    Serial.print(qy, 2);
-    Serial.print(F(","));
-    Serial.print(qz, 2);
-    Serial.print(F(","));
-    Serial.print(qw, 2);
-    Serial.print(F(","));
-    printAccuracyLevel(quatAccuracy);
+    // Serial.print(F("quat:"));
+    // Serial.print(packet.data.q[0], 2);
+    // Serial.print(F(","));
+    // Serial.print(packet.data.q[1], 2);
+    // Serial.print(F(","));
+    // Serial.print(packet.data.q[2], 2);
+    // Serial.print(F(","));
+    // Serial.print(packet.data.q[3], 2);
+    // Serial.print(F(","));
+    // printAccuracyLevel(quatAccuracy);
+    // if(quatAccuracy == 3 && !flag){
+    //   myIMU.saveCalibration();
+    //   flag = 1;
+    //   Serial.print("finished calibration");
+    // };
+
+    Serial.write(packet.buffer, 4*16 + 1 + 4);
+
   }
 }
 
