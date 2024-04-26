@@ -81,6 +81,8 @@ void setup()
   Serial.println();
   Serial.println("BNO080 Read example with Interrupt handler, getReading and multiple access");
 
+  delay(1000);
+
   Wire.begin();
 
   if (myIMU.begin(BNO080_DEFAULT_ADDRESS, Wire, D1) == false)
@@ -119,6 +121,22 @@ void setup()
       Serial.println("Failed to start driver\n");
       return;
   }
+
+  myIMU.calibrateAll();
+  delay(10);
+
+  while(!myIMU.calibrationComplete()){
+    Serial.println("Calibrating sensor ...");
+    myIMU.getReadings();
+    delay(100);
+  }
+  delay(10);
+
+  Serial.println("Finished Calibrating ...");
+
+  delay(10);
+  myIMU.saveCalibration();
+  delay(10);
 }
 
 int can_transmit=0;

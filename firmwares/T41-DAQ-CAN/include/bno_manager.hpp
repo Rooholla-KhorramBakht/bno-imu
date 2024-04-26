@@ -1,6 +1,7 @@
 // This class manages bno imu data recieved on the can bus
 #include <FlexCAN_T4.h>
 #include "params.h"
+#include "shm.hpp"
 
 class BnoManager{
 
@@ -40,6 +41,12 @@ class BnoManager{
             };
         };
         
+        void update_shm(float* shm_quat){
+            for(unsigned i = 0; i < 4; i++){
+                shm_quat[i] = quat[i];
+            }
+        }
+
         // Ideally these should be private
         float_t quat[4] = {0.,0.,0.,1.};
         float_t radError = 0.;
