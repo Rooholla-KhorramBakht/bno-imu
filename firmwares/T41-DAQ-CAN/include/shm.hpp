@@ -6,6 +6,9 @@ union shm{
         float quaternion_hand[4];
         float quaternion_shoulder[4];
         float quaternion_base[4];
+        float hand_quality;
+        float shoulder_quality;
+        float base_quality;
         uint8_t h1;
         uint8_t h2;
         uint8_t h3;

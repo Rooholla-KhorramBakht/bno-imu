@@ -41,10 +41,11 @@ class BnoManager{
             };
         };
         
-        void update_shm(float* shm_quat){
+        void update_shm(float* shm_quat, float &shm_quality){
             for(unsigned i = 0; i < 4; i++){
                 shm_quat[i] = quat[i];
             }
+            shm_quality = (float)quality;
         }
 
         // Ideally these should be private

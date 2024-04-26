@@ -11,11 +11,11 @@ BnoManager imu_shoulder(IMU_SHOULDER_ADDRESS);
 void canSniff(const CAN_message_t &msg) {
 
   imu_base.process_response(msg);
-  imu_base.update_shm(shm_t.data_.quaternion_base);
+  imu_base.update_shm(shm_t.data_.quaternion_base, shm_t.data_.base_quality);
   imu_shoulder.process_response(msg);
-  imu_shoulder.update_shm(shm_t.data_.quaternion_shoulder);
+  imu_shoulder.update_shm(shm_t.data_.quaternion_shoulder, shm_t.data_.shoulder_quality);
   imu_hand.process_response(msg);
-  imu_hand.update_shm(shm_t.data_.quaternion_hand);
+  imu_hand.update_shm(shm_t.data_.quaternion_hand, shm_t.data_.hand_quality);
 
   // Serial.println("IMU_BASE");
   // Serial.print(shm_t.data_.quaternion_base[0], 2);
@@ -32,7 +32,7 @@ void canSniff(const CAN_message_t &msg) {
   // };
   // Serial.print(sqrt(norm));
   // Serial.print(F(","));
-  // Serial.print(imu_base.quality);
+  // Serial.print(shm_t.data_.base_quality);
   // Serial.print(F(","));
   // Serial.println();
 
@@ -51,7 +51,7 @@ void canSniff(const CAN_message_t &msg) {
   // };
   // Serial.print(sqrt(norm));
   // Serial.print(F(","));
-  // Serial.print(imu_shoulder.quality);
+  // Serial.print(shm_t.data_.shoulder_quality);
   // Serial.print(F(","));
   // Serial.println();
 
@@ -70,7 +70,7 @@ void canSniff(const CAN_message_t &msg) {
   // };
   // Serial.print(sqrt(norm));
   // Serial.print(F(","));
-  // Serial.print(imu_hand.quality);
+  // Serial.print(shm_t.data_.hand_quality);
   // Serial.print(F(","));
   // Serial.println();
 }
