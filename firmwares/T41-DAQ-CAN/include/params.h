@@ -1,0 +1,7 @@
+#define CAN_QUAT_ADDRESS   0x0
+#define CAN_STATUS_ADDRESS 0x1
+#define uint_range 32768.0
+
+#define IMU_HAND_ADDRESS 0x120
+#define IMU_BASE_ADDRESS 0x121
+#define IMU_SHOULDER_ADDRESS 0x122

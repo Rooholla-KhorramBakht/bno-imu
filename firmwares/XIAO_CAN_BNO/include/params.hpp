@@ -1,0 +1,8 @@
+// CAN PROTOCOL
+
+#define TX_GPIO_NUM   GPIO_NUM_10  // Connects to CTX
+#define RX_GPIO_NUM   GPIO_NUM_9  // Connects to CRX
+#define CAN_BASE_ADDRESS   0x122
+#define CAN_QUAT_ADDRESS   (CAN_BASE_ADDRESS<<4)|0x0
+#define CAN_STATUS_ADDRESS   (CAN_BASE_ADDRESS<<4)|0x1
+#define CAN_TRANSMIT_TIMEOUT 100
